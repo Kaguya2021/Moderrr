@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const { TelegramClient, Api } = require("telegram");
 const { StringSession } = require("telegram/sessions/index.js");
 const { NewMessage } = require("telegram/events/NewMessage");
@@ -186,7 +185,7 @@ async function main() {
 }
 
 main().catch(console.error);
-=======
+
 const { NewMessage, CallbackQuery } = require('telegram/events');
 const config = require('./config');
 const database = require('./database');
@@ -233,4 +232,4 @@ process.on('unhandledRejection', (reason) => {
 });
 
 startApp();
->>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
+
