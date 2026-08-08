@@ -1,0 +1,25 @@
+{
+  "name": "adminmm",
+  "version": "1.0.0",
+  "description": "Автоматизация личных чатов Telegram MTProto на GramJS",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "telegram",
+    "mtproto",
+    "gramjs",
+    "userbot",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "telegram": "^2.26.1"
+  }
+}
