@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "telegram-chat-manager",
+=======
+  "name": "adminmm",
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
   "version": "1.0.0",
   "description": "Автоматизация личных чатов Telegram MTProto на GramJS",
   "main": "index.js",
@@ -17,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "better-sqlite3-multiple-ciphers": "^13.0.3",
     "dotenv": "^16.4.5",
     "qrcode": "^1.5.4",
@@ -24,6 +29,11 @@
     "sql.js": "^1.14.1",
     "sqlite": "^5.1.1",
     "sqlite3": "npm:sqlite3-offline@^4.3.1",
+=======
+    "dotenv": "^16.4.5",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
     "telegram": "^2.26.1"
   }
 }

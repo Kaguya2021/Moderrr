@@ -2,16 +2,31 @@ const { Api } = require('telegram');
 const config = require('./config');
 const database = require('./database');
 const moderation = require('./moderation');
+<<<<<<< HEAD
 const { logInfo, logWarn, logError, sleep, formatTimeString } = require('./utils');
 
 async function handleCommand(event) {
   const message = event.message;
   // Проверяем, что сообщение ИСХОДЯЩЕЕ
+=======
+const { getClient } = require('./telegram');
+const { logInfo, logWarn, logError, sleep, formatTimeString } = require('./utils');
+
+function isOwner(senderId) {
+  if (!senderId) return false;
+  const id = BigInt(senderId.toString());
+  return config.ownerIds.some((ownerId) => ownerId === id);
+}
+
+async function handleCommand(event) {
+  const message = event.message;
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
   if (!message || !message.out) return;
 
   const text = message.text ? message.text.trim() : '';
   if (!text.startsWith('.')) return;
 
+<<<<<<< HEAD
   if (!message.isPrivate) return;
 
   // Берем клиент прямо из события GramJS
@@ -21,6 +36,14 @@ async function handleCommand(event) {
     return;
   }
 
+=======
+  const senderId = message.senderId || (await message.getSender())?.id;
+  if (!isOwner(senderId)) return;
+
+  if (!message.isPrivate) return;
+
+  const client = getClient();
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
   const chatId = message.peerId;
   const peerUser = await client.getEntity(chatId);
 
@@ -71,8 +94,19 @@ async function processMuteCommand(client, message, targetUser, args) {
 
   const minutes = parseInt(args[0], 10);
 
+<<<<<<< HEAD
   if (isNaN(minutes) || minutes <= 0) {
     await sendTempResponse(client, message.peerId, `❌ Укажите корректное число минут.`);
+=======
+  if (isNaN(minutes)) {
+    await sendTempResponse(client, message.peerId, `❌ Время должно быть числом.`);
+    await deleteMessage(client, message.peerId, message.id);
+    return;
+  }
+
+  if (minutes <= 0) {
+    await sendTempResponse(client, message.peerId, `❌ Время должно быть положительным.`);
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
     await deleteMessage(client, message.peerId, message.id);
     return;
   }
@@ -143,7 +177,14 @@ async function processUnmuteCommand(client, message, targetUser) {
 }
 
 async function processBanCommand(client, message, targetUser, reason) {
+<<<<<<< HEAD
   if (!reason) reason = 'Не указана';
+=======
+  if (!reason) {
+    reason = 'Не указана';
+  }
+
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
   await deleteMessage(client, message.peerId, message.id);
 
   try {
@@ -154,14 +195,22 @@ async function processBanCommand(client, message, targetUser, reason) {
       message: `🚫 **Пользователь заблокирован**\n\nПричина:\n${reason}`,
     });
 
+<<<<<<< HEAD
     logInfo(`Пользователь ${targetUser.id} заблокирован.`);
+=======
+    logInfo(`Пользователь ${targetUser.id} заблокирован по причине: ${reason}`);
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
 
     setTimeout(async () => {
       await deleteMessage(client, message.peerId, sentMessage.id);
     }, 10000);
   } catch (err) {
     await client.sendMessage(message.peerId, {
+<<<<<<< HEAD
       message: `⚠️ Не удалось заблокировать пользователя через API. Состояние обновлено в базе.`,
+=======
+      message: `⚠️ Не удалось заблокировать пользователя через MTProto API. Состояние обновлено в локальной базе.`,
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
     });
   }
 }
@@ -176,17 +225,46 @@ async function processSpamCommand(client, message, args) {
   const count = parseInt(args[0], 10);
   const textToSend = args.slice(1).join(' ');
 
+<<<<<<< HEAD
   if (isNaN(count) || count <= 0) {
     await sendTempResponse(client, message.peerId, `❌ Количество должно быть положительным числом.`);
+=======
+  if (isNaN(count)) {
+    await sendTempResponse(client, message.peerId, `❌ Количество сообщений должно быть числом.`);
+    await deleteMessage(client, message.peerId, message.id);
+    return;
+  }
+
+  if (count <= 0) {
+    await sendTempResponse(client, message.peerId, `❌ Количество сообщений должно быть больше 0.`);
+    await deleteMessage(client, message.peerId, message.id);
+    return;
+  }
+
+  if (count > config.maxSpam) {
+    await sendTempResponse(
+      client,
+      message.peerId,
+      `❌ Превышен лимит! Максимально разрешено отправлять: ${config.maxSpam} сообщений.`
+    );
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
     await deleteMessage(client, message.peerId, message.id);
     return;
   }
 
   await deleteMessage(client, message.peerId, message.id);
 
+<<<<<<< HEAD
   for (let i = 0; i < count; i++) {
     await client.sendMessage(message.peerId, { message: textToSend });
     await sleep(config.spamDelayMs || 500);
+=======
+  logInfo(`Запуск рассылки из ${count} сообщений в чат ${message.peerId.userId}`);
+
+  for (let i = 0; i < count; i++) {
+    await client.sendMessage(message.peerId, { message: textToSend });
+    await sleep(config.spamDelayMs);
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
   }
 }
 
@@ -201,6 +279,10 @@ async function processInfoCommand(client, message, targetUser) {
     `Имя: ${targetUser.firstName || ''} ${targetUser.lastName || ''}\n` +
     `Username: ${targetUser.username ? '@' + targetUser.username : 'Отсутствует'}\n` +
     `Telegram ID: \`${targetUser.id}\` \n` +
+<<<<<<< HEAD
+=======
+    `Chat ID: \`${message.peerId.userId}\` \n` +
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
     `Статус мута: ${isMuted ? 'Заглушен 🔇' : 'Активен 🔊'}\n` +
     `Окончание мута: ${muteUntilStr}`;
 
@@ -242,9 +324,21 @@ async function handleCallbackQuery(event) {
   const query = event.query;
   if (!query || !query.data) return;
 
+<<<<<<< HEAD
   const client = event.client || query.client;
   const dataStr = query.data.toString();
   const [action, targetUserIdStr] = dataStr.split(':');
+=======
+  const senderId = query.userId;
+  if (!isOwner(senderId)) {
+    await query.answer({ message: '⚠️ У вас нет прав для управления этой системой.', alert: true });
+    return;
+  }
+
+  const dataStr = query.data.toString();
+  const [action, targetUserIdStr] = dataStr.split(':');
+  const client = getClient();
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
 
   try {
     if (action === 'unmute') {
@@ -299,11 +393,19 @@ async function handleCallbackQuery(event) {
 
       await query.answer();
       await client.sendMessage(query.peer, {
+<<<<<<< HEAD
         message: `👤 **Информация о пользователе**\nID: \`${targetUser.id}\` \nСтатус мута: ${isMuted ? 'Заглушен' : 'Активен'}`,
       });
     }
   } catch (err) {
     logError('Ошибка при обработке нажатия кнопки', err);
+=======
+        message: `👤 **Информация о пользователя**\nID: \`${targetUser.id}\` \nСтатус мута: ${isMuted ? 'Заглушен' : 'Активен'}`,
+      });
+    }
+  } catch (err) {
+    logError('Ошибка при обработке нажатия кнопки (CallbackQuery)', err);
+>>>>>>> 0788ca5c70b1c379c8c5da915c52960fcf3b558f
   }
 }
 
