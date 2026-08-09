@@ -1,5 +1,5 @@
 const { TelegramClient, Api } = require("telegram");
-const { StringSession } = require("telegram/sessions/index.js");
+const { StringSession } = require("telegram/sessions");
 const { NewMessage } = require("telegram/events/NewMessage");
 const dotenv = require("dotenv");
 const database = require("./database.js");
