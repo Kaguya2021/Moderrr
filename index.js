@@ -3,8 +3,18 @@ const { StringSession } = require("telegram/sessions");
 const { NewMessage } = require("telegram/events/NewMessage");
 const dotenv = require("dotenv");
 const database = require("./database.js");
+const http = require("http");
 
 dotenv.config();
+
+// Поднимаем мини-сервер для Render, чтобы он не усыплял Web Service по тайм-ауту портов
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Bot is running!");
+});
+server.listen(process.env.PORT || 10000, () => {
+  console.log(`🌐 HTTP-сервер запущен на порту ${process.env.PORT || 10000}`);
+});
 
 const apiId = Number(process.env.API_ID);
 const apiHash = process.env.API_HASH;
@@ -43,6 +53,8 @@ async function main() {
       const record = await database.getUser(senderIdStr);
       if (record && record.mute_until && record.mute_until > Date.now()) {
         await deleteMessage(chatId, message.id);
+        // Сразу пишем уведомление в чат при удалении сообщения нарушителя
+        await client.sendMessage(chatId, { message: "⚠️ Сообщение удалено (пользователь в муте)." });
       }
     }
   }, new NewMessage({ incoming: true }));
@@ -185,4 +197,3 @@ async function main() {
 }
 
 main().catch(console.error);
-            
