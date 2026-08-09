@@ -53,8 +53,6 @@ async function main() {
       const record = await database.getUser(senderIdStr);
       if (record && record.mute_until && record.mute_until > Date.now()) {
         await deleteMessage(chatId, message.id);
-        // Сразу пишем уведомление в чат при удалении сообщения нарушителя
-        await client.sendMessage(chatId, { message: "⚠️ Сообщение удалено (пользователь в муте)." });
       }
     }
   }, new NewMessage({ incoming: true }));
@@ -181,7 +179,7 @@ async function main() {
           await client.sendMessage(query.peer, { message: 'Укажите время командой: `.mute <минуты>`' });
         } else if (action === 'menu_ban') {
           try {
-            await client.invoke(new Api.contacts.Block({ id: targetUserId }));
+            await client.invoke(newApi.contacts.Block({ id: targetUserId }));
           } catch (e) {}
           if (database.setBanStatus) await database.setBanStatus(targetUserId, query.peer, true);
           await query.answer({ message: 'Заблокирован!' });
